@@ -55,14 +55,34 @@ class GameBoard {
         this.grid[pos].style.transform = `rotate(${deg}deg)`;
     };
 
+    //Method to move Pacman & the ghosts
+    moveCharacter(character) {
+        if (character.shouldMove()) {
+            const { nextMovePos, direction } = character.getNextMove(
+                this.objectExist
+            );
+            const { classesToRemove, classesToAdd } = character.makeMove();
+
+            if (character.rotation && nextMovePos !== character.pos) {
+                this.rotateDiv(nextMovePos, character.dir.rotation);
+                this.rotateDiv(character.pos, 0);
+            };
+
+            //Move character on the grid by removing/adding classes
+            this.removeObject(character.pos, classesToRemove);
+            this.addObject(nextMovePos, classesToAdd);
+
+            //Set the new position
+            character.setNewPos(nextMovePos, direction);
+        };
+    };
+
     //Static method
     static createGameBoard(DOMGrid, level) {
         const board = new this(DOMGrid);
         board.createGrid(level);
         return board;
     };
-
-    //Method to move pacman
 };
 
 export default GameBoard; 

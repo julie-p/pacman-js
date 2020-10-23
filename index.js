@@ -29,7 +29,7 @@ function checkCollision(pacman, ghosts) {
 };
 
 function gameLoop(pacman, ghosts) {
-
+    gameBoard.moveCharacter(pacman);
 };
 
 function startGame() {
@@ -47,6 +47,9 @@ function startGame() {
     document.addEventListener('keydown', (e) =>
         pacman.handleKeyInput(e, gameBoard.objectExist)
     );
+
+    //Interval to run the game loop Function
+    timer = setInterval(() => gameLoop(pacman), GLOBAL_SPEED);
 };
 
 //Initialize game 

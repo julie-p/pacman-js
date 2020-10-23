@@ -363,6 +363,34 @@ var GameBoard = /*#__PURE__*/function () {
     value: function rotateDiv(pos, deg) {
       this.grid[pos].style.transform = "rotate(".concat(deg, "deg)");
     }
+  }, {
+    key: "moveCharacter",
+    //Method to move Pacman & the ghosts
+    value: function moveCharacter(character) {
+      if (character.shouldMove()) {
+        var _character$getNextMov = character.getNextMove(this.objectExist),
+            nextMovePos = _character$getNextMov.nextMovePos,
+            direction = _character$getNextMov.direction;
+
+        var _character$makeMove = character.makeMove(),
+            classesToRemove = _character$makeMove.classesToRemove,
+            classesToAdd = _character$makeMove.classesToAdd;
+
+        if (character.rotation && nextMovePos !== character.pos) {
+          this.rotateDiv(nextMovePos, character.dir.rotation);
+          this.rotateDiv(character.pos, 0);
+        }
+
+        ; //Move character on the grid by removing/adding classes
+
+        this.removeObject(character.pos, classesToRemove);
+        this.addObject(nextMovePos, classesToAdd); //Set the new position
+
+        character.setNewPos(nextMovePos, direction);
+      }
+
+      ;
+    }
   }], [{
     key: "createGameBoard",
     //Static method
@@ -513,7 +541,9 @@ function checkCollision(pacman, ghosts) {}
 
 ;
 
-function gameLoop(pacman, ghosts) {}
+function gameLoop(pacman, ghosts) {
+  gameBoard.moveCharacter(pacman);
+}
 
 ;
 
@@ -528,7 +558,11 @@ function startGame() {
   gameBoard.addObject(287, [_setup.OBJECT_TYPE.PACMAN]);
   document.addEventListener('keydown', function (e) {
     return pacman.handleKeyInput(e, gameBoard.objectExist);
-  });
+  }); //Interval to run the game loop Function
+
+  timer = setInterval(function () {
+    return gameLoop(pacman);
+  }, GLOBAL_SPEED);
 }
 
 ; //Initialize game 
