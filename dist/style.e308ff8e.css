@@ -3,7 +3,7 @@
 }
 
 body {
-  background: url('/arcade-bg.20fb6b87.jpg') no-repeat center center fixed;
+  background: url('/pacman-bg.d20057c7.jpg') no-repeat center center fixed;
   background-size: cover;
 }
 
@@ -54,6 +54,22 @@ body {
 
 #start-button {
   margin-top: 20px;
+  padding: 10px;
+  background-color: black;
+  border: 2px solid darkblue;
+  color: blue;
+  cursor: pointer;
+  outline: none;
+}
+
+#start-button:active {
+  transform: scale(0.95);
+}
+
+#start-button:hover,
+#start-button:focus {
+  box-shadow: inset 0 0 0 2em darkblue;
+  color: white;
 }
 
 .hide {

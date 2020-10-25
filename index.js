@@ -23,18 +23,45 @@ let powerPillActive = false; //When Pacman eats a power pill
 let powerPillTimer = null;
 
 function gameOver(pacman, grid) {
+    document.removeEventListener('keydown', e => 
+        pacman.handleKeyInput(e, gameBoard.objectExist)
+    );
 
+    gameBoard.showGameStatus(gameWin);
+
+    clearInterval(timer);
+
+    startButton.classList.remove('hide');
 };
 
 function checkCollision(pacman, ghosts) {
+    //Calculate which ghosts Pacman collides with
+    const collidedGhost = ghosts.find( ghost => pacman.pos === ghost.pos);
 
+    if (collidedGhost) {
+        if (pacman.powerPill) {
+            gameBoard.removeObject(collidedGhost.pos, [
+                OBJECT_TYPE.GHOST, 
+                OBJECT_TYPE.SCARED, 
+                collidedGhost.name
+            ]);
+            collidedGhost.pos = collidedGhost.startPos;
+            socre += 100;
+        } else {
+            gameBoard.removeObject(pacman.pos, [OBJECT_TYPE.PACMAN]);
+            gameBoard.rotateDiv(pacman.pos, 0);
+            gameOver(pacman, gameGrid);
+        };
+    };
 };
 
 function gameLoop(pacman, ghosts) {
-    //Move Pacman
+    //Move Pacman & check collisions
     gameBoard.moveCharacter(pacman);
-    //Move Ghosts
+    checkCollision(pacman, ghosts);
+    //Move Ghosts & check collisions
     ghosts.forEach(ghost => gameBoard.moveCharacter(ghost));
+    checkCollision(pacman, ghosts);
 };
 
 function startGame() {
@@ -50,7 +77,7 @@ function startGame() {
     //Create Pacman
     const pacman = new Pacman(2, 287);
     gameBoard.addObject(287, [OBJECT_TYPE.PACMAN]);
-    document.addEventListener('keydown', (e) =>
+    document.addEventListener('keydown', e =>
         pacman.handleKeyInput(e, gameBoard.objectExist)
     );
 

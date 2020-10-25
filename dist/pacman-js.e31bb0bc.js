@@ -653,21 +653,51 @@ var powerPillActive = false; //When Pacman eats a power pill
 
 var powerPillTimer = null;
 
-function gameOver(pacman, grid) {}
+function gameOver(pacman, grid) {
+  document.removeEventListener('keydown', function (e) {
+    return pacman.handleKeyInput(e, gameBoard.objectExist);
+  });
+  gameBoard.showGameStatus(gameWin);
+  clearInterval(timer);
+  startButton.classList.remove('hide');
+}
 
 ;
 
-function checkCollision(pacman, ghosts) {}
+function checkCollision(pacman, ghosts) {
+  //Calculate which ghosts Pacman collides with
+  var collidedGhost = ghosts.find(function (ghost) {
+    return pacman.pos === ghost.pos;
+  });
+
+  if (collidedGhost) {
+    if (pacman.powerPill) {
+      gameBoard.removeObject(collidedGhost.pos, [_setup.OBJECT_TYPE.GHOST, _setup.OBJECT_TYPE.SCARED, collidedGhost.name]);
+      collidedGhost.pos = collidedGhost.startPos;
+      socre += 100;
+    } else {
+      gameBoard.removeObject(pacman.pos, [_setup.OBJECT_TYPE.PACMAN]);
+      gameBoard.rotateDiv(pacman.pos, 0);
+      gameOver(pacman, gameGrid);
+    }
+
+    ;
+  }
+
+  ;
+}
 
 ;
 
 function gameLoop(pacman, ghosts) {
-  //Move Pacman
-  gameBoard.moveCharacter(pacman); //Move Ghosts
+  //Move Pacman & check collisions
+  gameBoard.moveCharacter(pacman);
+  checkCollision(pacman, ghosts); //Move Ghosts & check collisions
 
   ghosts.forEach(function (ghost) {
     return gameBoard.moveCharacter(ghost);
   });
+  checkCollision(pacman, ghosts);
 }
 
 ;
